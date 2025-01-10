@@ -4,6 +4,13 @@ export const baseTXTDoc = {
   body: '',
   data: {
     pageCount: 1,
+    content: {
+      abstract: []
+    },
+    extractedElements: {
+      obsoletesRfc: [],
+      updatesRfc: []
+    },
     header: {
       authors: [],
       date: null,
