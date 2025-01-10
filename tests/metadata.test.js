@@ -519,6 +519,7 @@ describe('document should have valid version', () => {
     })
     test('valid version on non-existant doc', async () => {
       const doc = baseTXTDoc
+      doc.data.slug = 'draft-ietf-beep-boop-00'
 
       fetch.mockResponse('Not Found', { status: 404 })
       await expect(validateVersion(doc)).resolves.toHaveLength(0)
