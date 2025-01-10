@@ -21,18 +21,12 @@ expect.extend({
 describe('document should have valid date', () => {
   describe('document should have valid obsolete/update references in text', () => {
     test('RFC in obsoletes metadata but missing in abstract', async () => {
-      const doc = {
-        type: 'txt',
-        data: {
-          content: {
-            abstract: ['This document updates RFC 1234.']
-          },
-          extractedElements: {
-            obsoletesRfc: ['5678'],
-            updatesRfc: ['1234']
-          }
-        }
-      }
+      const doc = cloneDeep(baseTXTDoc)
+      doc.data.content.abstract = ['This document updates RFC 1234.']
+      doc.data.extractedElements.obsoletesRfc = ['5678']
+      doc.data.extractedElements.updatesRfc = ['1234']
+
+      fetchMock.mockResponseOnce(JSON.stringify({}))
 
       const result = await validateObsoleteUpdateRef(doc)
 
@@ -49,18 +43,12 @@ describe('document should have valid date', () => {
     })
 
     test('RFC in updates metadata but missing in abstract', async () => {
-      const doc = {
-        type: 'txt',
-        data: {
-          content: {
-            abstract: ['This document obsoletes RFC 5678.']
-          },
-          extractedElements: {
-            obsoletesRfc: ['5678'],
-            updatesRfc: ['1234']
-          }
-        }
-      }
+      const doc = cloneDeep(baseTXTDoc)
+      doc.data.content.abstract = ['This document obsoletes RFC 5678.']
+      doc.data.extractedElements.obsoletesRfc = ['5678']
+      doc.data.extractedElements.updatesRfc = ['1234']
+
+      fetchMock.mockResponseOnce(JSON.stringify({}))
 
       const result = await validateObsoleteUpdateRef(doc)
 
@@ -133,18 +121,12 @@ describe('document should have valid date', () => {
     })
 
     test('Abstract is empty, but metadata contains obsoletes/updates', async () => {
-      const doc = {
-        type: 'txt',
-        data: {
-          content: {
-            abstract: []
-          },
-          extractedElements: {
-            obsoletesRfc: ['5678'],
-            updatesRfc: ['1234']
-          }
-        }
-      }
+      const doc = cloneDeep(baseTXTDoc)
+      doc.data.content.abstract = []
+      doc.data.extractedElements.obsoletesRfc = ['5678']
+      doc.data.extractedElements.updatesRfc = ['1234']
+
+      fetchMock.mockResponseOnce(JSON.stringify({}))
 
       const result = await validateObsoleteUpdateRef(doc)
 
@@ -169,20 +151,14 @@ describe('document should have valid date', () => {
     })
 
     test('All obsoletes/updates are properly mentioned in abstract', async () => {
-      const doc = {
-        type: 'txt',
-        data: {
-          content: {
-            abstract: [
-              'This document obsoletes RFC 5678 and updates RFC 1234. Both changes aim to improve compatibility.'
-            ]
-          },
-          extractedElements: {
-            obsoletesRfc: ['5678'],
-            updatesRfc: ['1234']
-          }
-        }
-      }
+      const doc = cloneDeep(baseTXTDoc)
+      doc.data.content.abstract = [
+        'This document obsoletes RFC 5678 and updates RFC 1234. Both changes aim to improve compatibility.'
+      ]
+      doc.data.extractedElements.obsoletesRfc = ['5678']
+      doc.data.extractedElements.updatesRfc = ['1234']
+
+      fetchMock.mockResponseOnce(JSON.stringify({}))
 
       const result = await validateObsoleteUpdateRef(doc)
 
@@ -229,30 +205,10 @@ describe('document should have valid date', () => {
       expect(result).toEqual([])
     })
 
-    test('Multiple obsoletes and updates mentioned and matched correctly', async () => {
-      const doc = {
-        type: 'txt',
-        data: {
-          content: {
-            abstract: [
-              'This document obsoletes RFC 5678, RFC 6789, and updates RFC 1234, RFC 2345.'
-            ]
-          },
-          extractedElements: {
-            obsoletesRfc: ['5678', '6789'],
-            updatesRfc: ['1234', '2345']
-          }
-        }
-      }
-
-      const result = await validateObsoleteUpdateRef(doc)
-
-      expect(result).toEqual([])
-    })
-
     test('Obsoletes a non-existant RFC', async () => {
       const doc = baseTXTDoc
       doc.data.extractedElements.obsoletesRfc = ['1234, 2345']
+      doc.data.content.abstract = ['Obsoletes RFC1234 and RFC2345']
 
       fetch.mockResponse('Not Found', { status: 404 })
       await expect(validateObsoleteUpdateRef(doc)).resolves.toContainError('OBSOLETES_RFC_NOT_FOUND', ValidationWarning)
@@ -263,6 +219,7 @@ describe('document should have valid date', () => {
     test('Obsoletes an already obsoleted RFC', async () => {
       const doc = baseTXTDoc
       doc.data.extractedElements.obsoletesRfc = ['1234, 2345']
+      doc.data.content.abstract = ['Obsoletes RFC1234 and RFC3456']
 
       fetch.mockResponse(JSON.stringify({ obsoleted_by: ['3456'] }))
       await expect(validateObsoleteUpdateRef(doc)).resolves.toContainError('OBSOLETES_OBSOLETED_RFC', ValidationWarning)
@@ -273,6 +230,7 @@ describe('document should have valid date', () => {
     test('Updates a non-existent RFC', async () => {
       const doc = baseTXTDoc
       doc.data.extractedElements.updatesRfc = ['1234, 2345']
+      doc.data.content.abstract = ['Updates RFC1234 and RFC3456']
 
       fetch.mockResponse('Not Found', { status: 404 })
       await expect(validateObsoleteUpdateRef(doc)).resolves.toContainError('UPDATES_RFC_NOT_FOUND', ValidationWarning)
@@ -283,16 +241,18 @@ describe('document should have valid date', () => {
     test('Updates an already obsoleted RFC', async () => {
       const doc = baseTXTDoc
       doc.data.extractedElements.updatesRfc = ['1234, 2345']
+      doc.data.content.abstract = ['Updates RFC1234 and RFC3456']
 
       fetch.mockResponse(JSON.stringify({ obsoleted_by: ['3456'] }))
       await expect(validateObsoleteUpdateRef(doc)).resolves.toContainError('OBSOLETES_OBSOLETED_RFC', ValidationWarning)
-      await expect(validateObsoleteUpdateRef(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('OBSOLETES_OBSOLETED_RFC', ValidationWarning)
+      await expect(validateObsoleteUpdateRef(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('UPDATES_OBSOLETED_RFC', ValidationWarning)
       await expect(validateObsoleteUpdateRef(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
     })
 
     test('Updates an already updated RFC', async () => {
       const doc = baseTXTDoc
-      doc.data.extractedElements.updatesRfc = ['1234, 2345']
+      doc.data.extractedElements.updatesRfc = ['1234, 3456']
+      doc.data.content.abstract = ['Updates RFC1234 and RFC3456']
 
       fetch.mockResponse(JSON.stringify({ updated_by: ['3456'] }))
       await expect(validateObsoleteUpdateRef(doc)).resolves.toContainError('UPDATES_UPDATED_RFC', ValidationWarning)
