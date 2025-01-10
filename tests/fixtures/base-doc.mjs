@@ -11,7 +11,7 @@ export const baseTXTDoc = {
       expires: null
     },
     title: null,
-    slug: null
+    slug: 'draft-ietf-beep-boop-01'
   }
 }
 
