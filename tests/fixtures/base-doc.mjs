@@ -9,7 +9,8 @@ export const baseTXTDoc = {
       date: null,
       source: null,
       expires: null,
-      intendedStatus: null
+      intendedStatus: null,
+      category: null
     },
     content: {
       abstract: null,
