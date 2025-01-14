@@ -337,6 +337,55 @@ describe('document should have valid category', () => {
       await expect(validateCategory(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('INVALID_DOC_CATEGORY', ValidationWarning)
     })
   })
+
+  describe('TXT Document Type', () => {
+    test('valid intended status ', async () => {
+      const doc = baseTXTDoc
+      doc.data.header.intendedStatus = 'Standards Track'
+      doc.data.slug = 'draft-ietf-beep-boop'
+
+      await expect(validateCategory(doc)).resolves.toHaveLength(0)
+    })
+    test('valid category', async () => {
+      const doc = baseTXTDoc
+      doc.data.header.category = 'Standards Track'
+      doc.data.slug = 'draft-ietf-beep-boop'
+
+      await expect(validateCategory(doc)).resolves.toHaveLength(0)
+    })
+    test('missing category for a draft', async () => {
+      const doc = baseTXTDoc
+      doc.data.slug = 'draft-ietf-beep-boop'
+
+      await expect(validateCategory(doc)).resolves.toHaveLength(0)
+    })
+    test('missing category for a rfc doc', async () => {
+      const doc = baseTXTDoc
+      doc.data.slug = 'beep-boop'
+      doc.data.header.intendedStatus = null
+      doc.data.header.category = null
+
+      await expect(validateCategory(doc)).resolves.toContainError('MISSING_DOC_CATEGORY', ValidationWarning)
+      await expect(validateCategory(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('MISSING_DOC_CATEGORY', ValidationWarning)
+      await expect(validateCategory(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('MISSING_DOC_CATEGORY', ValidationWarning)
+    })
+    test('invalid intended status', async () => {
+      const doc = baseTXTDoc
+      doc.data.header.intendedStatus = 'xyz123'
+      doc.data.slug = 'draft-beep-boop'
+      await expect(validateCategory(doc)).resolves.toContainError('INVALID_DOC_CATEGORY', ValidationWarning)
+      await expect(validateCategory(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('INVALID_DOC_CATEGORY', ValidationWarning)
+      await expect(validateCategory(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('INVALID_DOC_CATEGORY', ValidationWarning)
+    })
+    test('invalid category status', async () => {
+      const doc = baseTXTDoc
+      doc.data.header.category = 'xyz123'
+      doc.data.slug = 'draft-beep-boop'
+      await expect(validateCategory(doc)).resolves.toContainError('INVALID_DOC_CATEGORY', ValidationWarning)
+      await expect(validateCategory(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('INVALID_DOC_CATEGORY', ValidationWarning)
+      await expect(validateCategory(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('INVALID_DOC_CATEGORY', ValidationWarning)
+    })
+  })
 })
 
 describe('document should have valid obsoletes / updates references', () => {

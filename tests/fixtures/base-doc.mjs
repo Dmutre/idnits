@@ -8,7 +8,9 @@ export const baseTXTDoc = {
       authors: [],
       date: null,
       source: null,
-      expires: null
+      expires: null,
+      intendedStatus: null,
+      category: null
     },
     content: {
       abstract: null,
