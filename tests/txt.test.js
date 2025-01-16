@@ -32,7 +32,7 @@ describe('Document hyphenated line-breaks', () => {
     const doc = { ...baseTXTDoc }
     await expect(validateHyphenatedLineBreaks(doc)).resolves.toHaveLength(0)
   })
-  test('ext document contain hyphenated line-breaks', async () => {
+  test('Text document contain hyphenated line-breaks', async () => {
     const doc = { ...baseTXTDoc }
 
     doc.data.possibleIssues.hyphenatedLines = [{ line: 1, pos: 20 }]
