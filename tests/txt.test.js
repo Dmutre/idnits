@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { MODES } from '../lib/config/modes.mjs'
 import { toContainError, ValidationError, ValidationWarning } from '../lib/helpers/error.mjs'
-import { validateLineLength, validateCodeComments, validateLineExtraSpacing, validateCodeBlockLicenses } from '../lib/modules/txt.mjs'
+import { validateLineLength, validateCodeComments, validateLineExtraSpacing, validateCodeBlockLicenses, validateUpdatesAndObsoletesLines } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
 
@@ -47,6 +47,33 @@ describe('The document should not contain more than 50 lines with intra-line ext
     await expect(validateLineExtraSpacing(doc, { mode: MODES.NORMAL })).resolves.toContainError('RAGGED_RIGHT', ValidationError)
     await expect(validateLineExtraSpacing(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('RAGGED_RIGHT', ValidationWarning)
     await expect(validateLineExtraSpacing(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
+describe('The document Updates or Obsoletes line on first page has more than just numbers of RFCs', () => {
+  test('empty rfc with letter', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    await expect(validateUpdatesAndObsoletesLines(doc)).resolves.toHaveLength(0)
+  })
+  test('updates line with letters', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.updatesRfcWithLetter = ['RFC 1234', 'RFC 4532']
+    doc.data.possibleIssues.obsoletesWithLetter = ['RFC 2434', 'RFC 4532']
+
+    await expect(validateUpdatesAndObsoletesLines(doc, { mode: MODES.NORMAL })).resolves.toContainError('UPDATE_CONTAINS_INVALID_CHARACTERS', ValidationWarning)
+    await expect(validateUpdatesAndObsoletesLines(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('UPDATE_CONTAINS_INVALID_CHARACTERS', ValidationWarning)
+    await expect(validateUpdatesAndObsoletesLines(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+  test('obsoletes line with letters', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.obsoletesWithLetter = ['RFC 2434', 'RFC 4532']
+
+    await expect(validateUpdatesAndObsoletesLines(doc, { mode: MODES.NORMAL })).resolves.toContainError('OBSOLETES_CONTAINS_INVALID_CHARACTERS', ValidationWarning)
+    await expect(validateUpdatesAndObsoletesLines(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('OBSOLETES_CONTAINS_INVALID_CHARACTERS', ValidationWarning)
+    await expect(validateUpdatesAndObsoletesLines(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 })
 
