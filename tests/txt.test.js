@@ -1,7 +1,11 @@
 import { describe, expect, test } from '@jest/globals'
 import { MODES } from '../lib/config/modes.mjs'
 import { toContainError, ValidationError, ValidationWarning } from '../lib/helpers/error.mjs'
+<<<<<<< HEAD
 import { validateLineLength, validateCodeComments, validateCodeBlockLicenses, validateLineExtraSpacing, validateHyphenatedLineBreaks } from '../lib/modules/txt.mjs'
+=======
+import { validateLineLength, validateCodeComments, validateLineExtraSpacing, validateCodeBlockLicenses, validateHyphenatedLineBreaks } from '../lib/modules/txt.mjs'
+>>>>>>> 8971b8db657114c9d7c739ca4be2015997b048f6
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
 
