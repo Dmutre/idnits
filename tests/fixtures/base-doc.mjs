@@ -36,6 +36,7 @@ export const baseTXTDoc = {
       referenceSectionDraftReferences: []
     },
     possibleIssues: {
+      hyphenatedLines: [],
       linesWithSpaces: [],
       inlineCode: [],
       misspeled2119Keywords: []
