@@ -37,6 +37,7 @@ export const baseTXTDoc = {
     },
     possibleIssues: {
       hyphenatedLines: [],
+      linesWithSpaces: [],
       inlineCode: [],
       misspeled2119Keywords: []
     }
