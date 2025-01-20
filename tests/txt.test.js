@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { MODES } from '../lib/config/modes.mjs'
-import { toContainError, ValidationError, ValidationWarning } from '../lib/helpers/error.mjs'
-import { validateLineLength, validateCodeComments, validateLineExtraSpacing, validateCodeBlockLicenses } from '../lib/modules/txt.mjs'
+import { toContainError, ValidationError, ValidationWarning, ValidationComment } from '../lib/helpers/error.mjs'
+import { validateLineLength, validateCodeComments, validateLineExtraSpacing, validateCodeBlockLicenses, validateReferenceStyle } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
 
@@ -47,6 +47,29 @@ describe('The document should not contain more than 50 lines with intra-line ext
     await expect(validateLineExtraSpacing(doc, { mode: MODES.NORMAL })).resolves.toContainError('RAGGED_RIGHT', ValidationError)
     await expect(validateLineExtraSpacing(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('RAGGED_RIGHT', ValidationWarning)
     await expect(validateLineExtraSpacing(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
+describe('Validate document references style.', () => {
+  test('Document use informative style', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.references.type = 'informative'
+    doc.data.extractedElements.nonReferenceSectionRfc = ['1234', '4567']
+
+    await expect(validateReferenceStyle(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_USE_INFORMATIVE_STYLE', ValidationComment)
+    await expect(validateReferenceStyle(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_USE_INFORMATIVE_STYLE', ValidationComment)
+    await expect(validateReferenceStyle(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+  test('Document use normative style', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.references.type = 'normative'
+    doc.data.extractedElements.nonReferenceSectionDraftReferences = ['[123], [RFC 1234]']
+
+    await expect(validateReferenceStyle(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_USE_NORMATIVE_STYLE', ValidationComment)
+    await expect(validateReferenceStyle(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_USE_NORMATIVE_STYLE', ValidationComment)
+    await expect(validateReferenceStyle(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 })
 

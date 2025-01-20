@@ -1,13 +1,12 @@
 
-
-
-
 idr                                                             Z. Zhang
 Internet-Draft                                                   J. Haas
 Intended status: Standards Track                        Juniper Networks
 Expires: 8 September 2023                                       K. Patel
-                                                                  Arrcus
+Obsoletes: RFC 5678, RFC 1234, RFC 2345, RFC 3456                 Arrcus
                                                             7 March 2023
+Updates: RFC 6789, RFC 7890, RFC 8901, RFC 9012, RFC 10234,
+         RFC 11235, RFC 12236, RFC 13237 (if approved)
 
 
             Extended Communities Derived from Route Targets
@@ -15,13 +14,16 @@ Expires: 8 September 2023                                       K. Patel
 
 Abstract
 
-   This document specifies a way to derive an Extended Community from aaaaaaaaa
-   Route Target and describes some example use cases.
+   This document specifies a way to derive an Extended Community from a
+   Route Target and describes some example use cases. updates RFC 13237, 
+   RFC 6789, RFC 7890, RFC 8901, RFC 9012, [RFC10234], RFC 11235 and
+   RFC 12236. Also this document obsoletes RFC3456,
+   [RFC2345], RFC1234, RFC5678
 
 Status of This Memo
 
    This Internet-Draft is submitted in full conformance with the
-   provisions of BCP 78 and BCP 79.
+   provisions of BCP 78 and BCP
 
    Internet-Drafts are working documents of the Internet Engineering
    Task Force (IETF).  Note that other groups may also distribute
@@ -89,7 +91,7 @@ Table of Contents
    not all those PEs.  The route could be of any SAFI/type (does not
    need to be a VPN prefix), but it needs to be associated with the VPN
    on those importing PEs.  The exact meaning of "association" here does
-   not matter, but the key is that  [RFC 1111] those PEs need to know that the route
+   not matter, but the key is that those PEs need to know that the route
    is related to that VPN.
 
    To control the propagation to and importation by those PEs, a
@@ -107,7 +109,10 @@ Table of Contents
    convenient if EC2 is derived from the RT1/EC1, e.g. the sub-type of
    RT1/EC1 is changed to a new known value while everything else remains
 
-
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+   "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",
+   "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document
+   are to be interpreted as described in RFC 2119.
 
 Zhang, et al.           Expires 8 September 2023                [Page 2]
 
@@ -124,7 +129,7 @@ Internet-Draft               RT-derived ECs                   March 2023
    Address-Specific Extended Community [RFC5701]).  Any protocol/feature
    that can take advantages of the convenience of generic derivation may
    use them, or not use them at its own discretion, and how they are
-   used is outside the scope of this document.
+   used is outside the scope of this document. NOT RECOMMENDED
 
 2.  Route Target Type/sub-type Conventions
 
@@ -174,12 +179,12 @@ Internet-Draft               RT-derived ECs                   March 2023
    registered for something else as well (than for RT derivation).  As a
    result, the mapping between sub-type 0x02 and 0x15, type 0x0002 and
    0x0015, type 0x0011 and TBD are only defined for the known types
-   listed above.
+   listed above. 233.252.0.0/24
 
    Of course, when a new type is defined and registered, it is desired
    to proactively register sub-type 0x02 and 0x15 at the very beginning
    for Route Target and Route Target Derivation purposes, should the
-   review process catch it.
+   review process catch it. 2001:0db8:85a3::8a2e:370:7334
 
 3.  Use Cases
 
@@ -188,6 +193,9 @@ Internet-Draft               RT-derived ECs                   March 2023
    (when the routes to which they are attached provide enough context).
    It is not the intention of this document to mandate that it must be
    used.
+   <CODE BEGINS>
+   #
+   <CODE ENDS>
 
 3.1.  EVPN EVI-RT Extended Community
 
@@ -233,7 +241,7 @@ Internet-Draft               RT-derived ECs                   March 2023
    described, as quoted below:
 
      "The translation of the IRTs is necessary in order to refrain from
-     importing "route-filter" VRF routes into VPN VRFs that would
+     importing "route-filter" VRF [4] routes into VPN VRFs that would
      import the same route-targets.  The translation of the IRTS is
      done as follows.  For a given IRT, the equivalent translated RT
      (TRT) is constructed by means of swapping the value of the high-
@@ -288,25 +296,26 @@ Internet-Draft               RT-derived ECs                   March 2023
    suggestions.
 
 7.  References
+[1]  Postel, J., Editor, "Internet Official Protocol Standards", STD
+        1, RFC 2200, June 1997.
+
+   [2]  Bradner, S., "The Internet Standards Process -- Revision 3", BCP
+        9, RFC 2026, October 1996.
+
+   [3]  Bradner, S., "Key words for use in RFCs to Indicate Requirement
+        Levels", BCP 14, RFC 2119, March 1997.
+
+   [4]  Malkin, G., and J. Reynolds, "F.Y.I. on F.Y.I Introduction to
+        the F.Y.I. Notes", FYI 1, RFC 1150, March 1990.
+
+   [5]  Postel, J., Li, T., and Y. Rekhter, "Best Current Practices",
+        BCP 1, RFC 1818, August 1995.
+
+   [6]  Postel, J., Editor, "Introduction to the STD Notes", RFC 1311,
+        March 1992.
 
 7.1.  Normative References
 
-   [RFC4360]  Sangli, S., Tappan, D., and Y. Rekhter, "BGP Extended
-              Communities Attribute", RFC 4360, DOI 10.17487/RFC4360,
-              February 2006, <https://www.rfc-editor.org/info/rfc4360>.
-
-   [RFC5701]  Rekhter, Y., "IPv6 Address Specific BGP Extended Community
-              Attribute", RFC 5701, DOI 10.17487/RFC5701, November 2009,
-              <https://www.rfc-editor.org/info/rfc5701>.
-
-   [RFC7153]  Rosen, E. and Y. Rekhter, "IANA Registries for BGP
-              Extended Communities", RFC 7153, DOI 10.17487/RFC7153,
-              March 2014, <https://www.rfc-editor.org/info/rfc7153>.
-
-   [RFC7432]  Sajassi, A., Ed., Aggarwal, R., Bitar, N., Isaac, A.,
-              Uttaro, J., Drake, J., and W. Henderickx, "BGP MPLS-Based
-              Ethernet VPN", RFC 7432, DOI 10.17487/RFC7432, February
-              2015, <https://www.rfc-editor.org/info/rfc7432>.
 
 7.2.  Informative References
 
