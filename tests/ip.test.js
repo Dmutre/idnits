@@ -52,30 +52,30 @@ describe('document should have valid IP Address mentions', () => {
 
       const result = await validateIPs(doc, { mode: MODES.NORMAL })
       expect(result).toEqual([
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "256.0.0.1" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '256.0.0.1'
         }),
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "192.0.2.300" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '192.0.2.300'
         }),
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "192.0.2" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '192.0.2'
         }),
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "192.0.2.1/33" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '192.0.2.1/33'
         }),
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "abc.def.ghi.jkl" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: 'abc.def.ghi.jkl'
         })
       ])
     })
 
-    test('non-documentation IPv4 addresses', async () => {
+    test('Documentation IPv4 addresses', async () => {
       const doc = {
         type: 'txt',
         data: {
