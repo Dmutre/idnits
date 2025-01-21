@@ -39,6 +39,7 @@ export const baseTXTDoc = {
     possibleIssues: {
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
+      isAbstractNumbered: null,
       linesWithSpaces: [],
       hyphenatedLines: [],
       inlineCode: [],
