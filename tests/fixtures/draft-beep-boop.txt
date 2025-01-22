@@ -89,7 +89,7 @@ Table of Contents
    not all those PEs.  The route could be of any SAFI/type (does not
    need to be a VPN prefix), but it needs to be associated with the VPN
    on those importing PEs.  The exact meaning of "association" here does
-   not matter, but the key is that  [RFC 1111] those PEs need to know that the route
+   not matter, but the key is that those PEs need to know that the route
    is related to that VPN.
 
    To control the propagation to and importation by those PEs, a
