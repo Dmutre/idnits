@@ -44,8 +44,7 @@ export const baseTXTDoc = {
     },
     references: {
       rfc2119: false,
-      rfc8174: false,
-      type: null
+      rfc8174: false
     }
   }
 }

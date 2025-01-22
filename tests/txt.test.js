@@ -51,24 +51,24 @@ describe('The document should not contain more than 50 lines with intra-line ext
 })
 
 describe('Validate document references style.', () => {
-  test('Document use informative style', async () => {
+  test('Document use numeric style', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
-    doc.data.references.type = 'informative'
-    doc.data.extractedElements.nonReferenceSectionRfc = ['1234', '4567']
+    doc.data.extractedElements.referenceSectionRfc = [{ value: '[1]', subsection: null }, { value: '[2]', subsection: null }]
+    doc.data.extractedElements.nonReferenceSectionDraftReferences = ['[ABC]']
 
-    await expect(validateReferenceStyle(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_USE_INFORMATIVE_STYLE', ValidationComment)
-    await expect(validateReferenceStyle(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_USE_INFORMATIVE_STYLE', ValidationComment)
+    await expect(validateReferenceStyle(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_USE_NUMERIC_REFERENCES', ValidationComment)
+    await expect(validateReferenceStyle(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_USE_NUMERIC_REFERENCES', ValidationComment)
     await expect(validateReferenceStyle(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
-  test('Document use normative style', async () => {
+  test('Document use string style', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
-    doc.data.references.type = 'normative'
-    doc.data.extractedElements.nonReferenceSectionDraftReferences = ['[123], [RFC 1234]']
+    doc.data.extractedElements.referenceSectionRfc = [{ value: 1234, subsection: null }, { value: 2345, subsection: null }]
+    doc.data.extractedElements.nonReferenceSectionDraftReferences = ['[1]']
 
-    await expect(validateReferenceStyle(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_USE_NORMATIVE_STYLE', ValidationComment)
-    await expect(validateReferenceStyle(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_USE_NORMATIVE_STYLE', ValidationComment)
+    await expect(validateReferenceStyle(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_USE_STRING_REFERENCES', ValidationComment)
+    await expect(validateReferenceStyle(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_USE_STRING_REFERENCES', ValidationComment)
     await expect(validateReferenceStyle(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 })
