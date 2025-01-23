@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { MODES } from '../lib/config/modes.mjs'
 import { toContainError, ValidationError, ValidationWarning, ValidationComment } from '../lib/helpers/error.mjs'
-import { validateLineLength, validateCodeComments, validateLineExtraSpacing, validateCodeBlockLicenses, validateReferenceStyle, validateUpdatesAndObsoletesLines, validateHyphenatedLineBreaks } from '../lib/modules/txt.mjs'
+import { validateLineLength, validateCodeComments, validateLineExtraSpacing, validateCodeBlockLicenses, validateReferenceStyle, validateUpdatesAndObsoletesLines, validateHyphenatedLineBreaks, validatePKorBM } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
 
@@ -112,6 +112,27 @@ describe('Document hyphenated line-breaks', () => {
     await expect(validateHyphenatedLineBreaks(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
     await expect(validateHyphenatedLineBreaks(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('HYPHENATED_LINE_BREAKS', ValidationWarning)
     await expect(validateHyphenatedLineBreaks(doc, { mode: MODES.NORMAL })).resolves.toContainError('HYPHENATED_LINE_BREAKS', ValidationWarning)
+  })
+})
+
+describe('The document Document starts with PK or BM.', () => {
+  test('Document start with PK or BM', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.isPKorBM = true
+
+    await expect(validatePKorBM(doc, { mode: MODES.NORMAL })).resolves.toContainError('FIRST_LINE_STARTS_WITH_PK_OR_BM', ValidationComment)
+    await expect(validatePKorBM(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('FIRST_LINE_STARTS_WITH_PK_OR_BM', ValidationComment)
+    await expect(validatePKorBM(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+  test('Document does not start with PK or BM', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.isPKorBM = false
+
+    await expect(validatePKorBM(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validatePKorBM(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validatePKorBM(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 })
 
