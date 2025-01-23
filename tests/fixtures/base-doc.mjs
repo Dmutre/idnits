@@ -43,6 +43,10 @@ export const baseTXTDoc = {
       hyphenatedLines: [],
       inlineCode: [],
       misspeled2119Keywords: []
+    },
+    references: {
+      rfc2119: false,
+      rfc8174: false
     }
   }
 }
