@@ -34,7 +34,9 @@ export const baseTXTDoc = {
       nonReferenceSectionRfc: [],
       referenceSectionRfc: [],
       nonReferenceSectionDraftReferences: [],
-      referenceSectionDraftReferences: []
+      referenceSectionDraftReferences: [],
+      bracketedRfcNonReferences: [],
+      bracketedRfcReferences: []
     },
     possibleIssues: {
       updatesRfcWithLetter: [],
