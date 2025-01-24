@@ -43,6 +43,7 @@ export const baseTXTDoc = {
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
       isCopyrightNoticeNumbered: null,
+      isStatusOfThisMemoNumbered: null,
       linesWithSpaces: [],
       hyphenatedLines: [],
       inlineCode: [],
