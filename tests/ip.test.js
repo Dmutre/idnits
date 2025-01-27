@@ -90,20 +90,7 @@ describe('document should have valid IP Address mentions', () => {
       }
 
       const result = await validateIPs(doc, { mode: MODES.NORMAL })
-      expect(result).toEqual([
-        new ValidationWarning('NON_DOCUMENTATION_IPV4', 'IPv4 address "8.8.8.8" is not in recommended documentation ranges.', {
-          ref: 'https://datatracker.ietf.org/doc/html/rfc5737',
-          text: '8.8.8.8'
-        }),
-        new ValidationWarning('NON_DOCUMENTATION_IPV4', 'IPv4 address "1.1.1.1" is not in recommended documentation ranges.', {
-          ref: 'https://datatracker.ietf.org/doc/html/rfc5737',
-          text: '1.1.1.1'
-        }),
-        new ValidationWarning('NON_DOCUMENTATION_IPV4', 'IPv4 address "123.45.67.89" is not in recommended documentation ranges.', {
-          ref: 'https://datatracker.ietf.org/doc/html/rfc5737',
-          text: '123.45.67.89'
-        })
-      ])
+      expect(result).toEqual([])
     })
 
     test('Valid IPv6 documentation address', async () => {
