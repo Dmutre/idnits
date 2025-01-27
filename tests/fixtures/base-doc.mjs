@@ -54,7 +54,10 @@ export const baseTXTDoc = {
       rfc8174: false
     },
     contains: {
-      idIndication: false
+      idIndication: false,
+      revisedBsdLicense: false,
+      codeBlocks: false,
+      copyrightLine: false
     }
   }
 }
