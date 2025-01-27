@@ -50,6 +50,11 @@ export const baseTXTDoc = {
     references: {
       rfc2119: false,
       rfc8174: false
+    },
+    contains: {
+      revisedBsdLicense: false,
+      codeBlocks: false,
+      copyrightLine: false
     }
   }
 }
