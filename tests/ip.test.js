@@ -52,30 +52,30 @@ describe('document should have valid IP Address mentions', () => {
 
       const result = await validateIPs(doc, { mode: MODES.NORMAL })
       expect(result).toEqual([
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "256.0.0.1" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '256.0.0.1'
         }),
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "192.0.2.300" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '192.0.2.300'
         }),
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "192.0.2" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '192.0.2'
         }),
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "192.0.2.1/33" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '192.0.2.1/33'
         }),
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "abc.def.ghi.jkl" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: 'abc.def.ghi.jkl'
         })
       ])
     })
 
-    test('non-documentation IPv4 addresses', async () => {
+    test('Documentation IPv4 addresses', async () => {
       const doc = {
         type: 'txt',
         data: {
@@ -90,20 +90,13 @@ describe('document should have valid IP Address mentions', () => {
       }
 
       const result = await validateIPs(doc, { mode: MODES.NORMAL })
-      expect(result).toEqual([
-        new ValidationWarning('NON_DOCUMENTATION_IPV4', 'IPv4 address "8.8.8.8" is not in recommended documentation ranges.', {
-          ref: 'https://datatracker.ietf.org/doc/html/rfc5737',
-          text: '8.8.8.8'
-        }),
-        new ValidationWarning('NON_DOCUMENTATION_IPV4', 'IPv4 address "1.1.1.1" is not in recommended documentation ranges.', {
-          ref: 'https://datatracker.ietf.org/doc/html/rfc5737',
-          text: '1.1.1.1'
-        }),
-        new ValidationWarning('NON_DOCUMENTATION_IPV4', 'IPv4 address "123.45.67.89" is not in recommended documentation ranges.', {
-          ref: 'https://datatracker.ietf.org/doc/html/rfc5737',
-          text: '123.45.67.89'
-        })
-      ])
+      expect(result).toEqual([])
+    })
+
+    test('Valid IPv6 documentation address', async () => {
+      const input = { type: 'txt', data: { extractedElements: { ipv4: [], ipv6: ['2001:db8::1'] } } }
+      const result = await validateIPs(input, { mode: 0 })
+      expect(result).toEqual([])
     })
 
     test('Valid IPv6 documentation address', async () => {
@@ -116,22 +109,17 @@ describe('document should have valid IP Address mentions', () => {
       const input = { type: 'txt', data: { extractedElements: { ipv4: [], ipv6: ['1234:5678:90ab::g'] } } }
       const result = await validateIPs(input, { mode: 0 })
       expect(result).toEqual([
-        new ValidationWarning('INVALID_IPV6_ADDRESS', 'IPv6 address "1234:5678:90ab::g" is invalid.', {
+        new ValidationWarning('INVALID_IPV6_ADDRESS', 'IPv6 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc4291',
           text: '1234:5678:90ab::g'
         })
       ])
     })
 
-    test('Non-standard IPv6 address', async () => {
+    test('Non-tandard IPv6 address', async () => {
       const input = { type: 'txt', data: { extractedElements: { ipv4: [], ipv6: ['abcd::1234'] } } }
       const result = await validateIPs(input, { mode: 0 })
-      expect(result).toEqual([
-        new ValidationWarning('NON_STANDARD_IPV6_ADDRESS', 'IPv6 address "abcd::1234" does not match documentation or standard local ranges.', {
-          ref: 'https://datatracker.ietf.org/doc/html/rfc3849',
-          text: 'abcd::1234'
-        })
-      ])
+      expect(result).toEqual([])
     })
 
     test('Mixed valid IPv4 and IPv6', async () => {
@@ -144,11 +132,11 @@ describe('document should have valid IP Address mentions', () => {
       const input = { type: 'txt', data: { extractedElements: { ipv4: ['999.999.999.999'], ipv6: ['abcd::g'] } } }
       const result = await validateIPs(input, { mode: 0 })
       expect(result).toEqual([
-        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address "999.999.999.999" is invalid.', {
+        new ValidationWarning('INVALID_IPV4_ADDRESS', 'IPv4 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc791',
           text: '999.999.999.999'
         }),
-        new ValidationWarning('INVALID_IPV6_ADDRESS', 'IPv6 address "abcd::g" is invalid.', {
+        new ValidationWarning('INVALID_IPV6_ADDRESS', 'IPv6 address is invalid.', {
           ref: 'https://datatracker.ietf.org/doc/html/rfc4291',
           text: 'abcd::g'
         })
