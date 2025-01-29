@@ -53,6 +53,7 @@ export const baseTXTDoc = {
       rfc8174: false
     },
     contains: {
+      copyrightLicenseValid: false,
       revisedBsdLicense: false,
       codeBlocks: false,
       copyrightLine: false

@@ -13,7 +13,8 @@ import {
   validateAbstractSectionIsNumbered,
   validateLinksInText,
   validateCopyrightSection,
-  validateCopyrightDate
+  validateCopyrightDate,
+  validateCopyrightLicense
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -253,6 +254,27 @@ describe('The copyright date is not valid.', () => {
     await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
     await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
     await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+  })
+})
+
+describe('The copyright license validation.', () => {
+  test('copyright license not valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.copyrightLine = false
+
+    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
+    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
+    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
+  })
+  test('copyright license valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.copyrightLicenseValid = true
+
+    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 })
 
