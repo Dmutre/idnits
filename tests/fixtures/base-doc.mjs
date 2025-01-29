@@ -57,8 +57,9 @@ export const baseTXTDoc = {
     contains: {
       revisedBsdLicense6_i: false,
       codeBlocks: false,
+      idIndication: false,
       copyrightSection6_b_i: false,
-      idIndication: false
+      copyrightLicenseValid: false
     }
   }
 }
