@@ -17,7 +17,8 @@ import {
   validateExpiresLine,
   validateCopyrightNoticeSectionIsNumbered,
   validateStatusOfThisMemoSectionIsNumbered,
-  validateCopyrightSection
+  validateCopyrightSection,
+  validateCopyrightDate
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -261,6 +262,44 @@ describe('The copyright line is not present.', () => {
     await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
     await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
     await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
+describe('The copyright date is not valid.', () => {
+  test('copyright text date valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.copyrightDates = [2025]
+
+    await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+  test('copyright console date valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.data.extractedElements.copyrightDates = [2025]
+
+    await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL, year: 2025 })).resolves.toHaveLength(0)
+    await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST, year: 2025 })).resolves.toHaveLength(0)
+    await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION, year: 2025 })).resolves.toHaveLength(0)
+  })
+  test('copyright text date not valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.copyrightDates = [2023]
+
+    await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+    await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+    await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+  })
+  test('copyright console date not valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.copyrightDates = [2034]
+
+    await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+    await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+    await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
   })
 })
 
