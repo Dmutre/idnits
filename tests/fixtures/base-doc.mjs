@@ -40,6 +40,8 @@ export const baseTXTDoc = {
       bracketedRfcReferences: []
     },
     possibleIssues: {
+      copyrightLines: [],
+      copyrightLicenses: [],
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
@@ -53,10 +55,8 @@ export const baseTXTDoc = {
       rfc8174: false
     },
     contains: {
-      copyrightLicenseValid: false,
       revisedBsdLicense: false,
-      codeBlocks: false,
-      copyrightLine: false
+      codeBlocks: false
     }
   }
 }
