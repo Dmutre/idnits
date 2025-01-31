@@ -369,6 +369,27 @@ describe('The copyright line present more one instance.', () => {
   })
 })
 
+describe('The copyright license present more one instance.', () => {
+  test('copyright license more one instance', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.copyrightLicenses = ['Copyright license', 'Copyright license']
+
+    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
+    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
+    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
+  })
+  test('copyright license only one in text', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.copyrightLicenses = ['Copyright license']
+
+    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
 describe('validateCodeComments', () => {
   test('should return no warnings for documents without comments outside code blocks', async () => {
     const doc = {
