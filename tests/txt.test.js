@@ -12,7 +12,8 @@ import {
   validatePKorBM,
   validateAbstractSectionIsNumbered,
   validateLinksInText,
-  validatePages
+  validatePages,
+  validateIDIndicator
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -402,6 +403,53 @@ describe('validatePages', () => {
       new ValidationWarning(
         'PAGE_TOO_LONG',
         'Page 5 is too long (90 lines).',
+        { ref: 'https://authors.ietf.org/en/drafting-in-plaintext#checklist' }
+      )
+    ])
+  })
+})
+
+describe('validateIDIndicator', () => {
+  test('should return no warnings in SUBMISSION mode', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    const result = await validateIDIndicator(doc, { mode: MODES.SUBMISSION })
+    expect(result).toEqual([
+      new ValidationError(
+        'ID_INDICATOR_MISSING',
+        'Document does not contain an ID indication.',
+        { ref: 'https://authors.ietf.org/en/drafting-in-plaintext#checklist' }
+      )
+    ])
+  })
+
+  test('should return no warnings if document contains ID indication', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.data.contains.idIndication = true
+    const result = await validateIDIndicator(doc, { mode: MODES.NORMAL })
+    expect(result).toHaveLength(0)
+  })
+
+  test('should return a warning if document does not contain ID indication', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.data.contains.idIndication = false
+    const result = await validateIDIndicator(doc, { mode: MODES.NORMAL })
+    expect(result).toEqual([
+      new ValidationError(
+        'ID_INDICATOR_MISSING',
+        'Document does not contain an ID indication.',
+        { ref: 'https://authors.ietf.org/en/drafting-in-plaintext#checklist' }
+      )
+    ])
+  })
+
+  test('should handle missing idIndication property gracefully', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    delete doc.data.contains.idIndication
+    const result = await validateIDIndicator(doc, { mode: MODES.NORMAL })
+    expect(result).toEqual([
+      new ValidationError(
+        'ID_INDICATOR_MISSING',
+        'Document does not contain an ID indication.',
         { ref: 'https://authors.ietf.org/en/drafting-in-plaintext#checklist' }
       )
     ])
