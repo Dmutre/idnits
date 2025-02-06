@@ -392,7 +392,7 @@ describe('validateCodeBlockLicenses', () => {
       data: {
         contains: {
           codeBlocks: false,
-          revisedBsdLicense: false
+          revisedBsdLicense6_i: false
         }
       }
     }
@@ -407,7 +407,7 @@ describe('validateCodeBlockLicenses', () => {
       data: {
         contains: {
           codeBlocks: true,
-          revisedBsdLicense: true
+          revisedBsdLicense6_i: true
         }
       }
     }
@@ -422,7 +422,7 @@ describe('validateCodeBlockLicenses', () => {
       data: {
         contains: {
           codeBlocks: true,
-          revisedBsdLicense: false
+          revisedBsdLicense6_i: false
         }
       }
     }
@@ -445,7 +445,7 @@ describe('validateCodeBlockLicenses', () => {
       data: {
         contains: {
           codeBlocks: true,
-          revisedBsdLicense: false
+          revisedBsdLicense6_i: false
         }
       }
     }
@@ -455,7 +455,7 @@ describe('validateCodeBlockLicenses', () => {
     expect(result).toHaveLength(0)
   })
 
-  test('should handle missing "revisedBsdLicense" gracefully', async () => {
+  test('should handle missing "revisedBsdLicense6_i" gracefully', async () => {
     const doc = {
       data: {
         contains: {
