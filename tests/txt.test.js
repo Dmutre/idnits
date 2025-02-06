@@ -12,6 +12,7 @@ import {
   validatePKorBM,
   validateAbstractSectionIsNumbered,
   validateLinksInText,
+  validateCopyrightSection,
   validatePages,
   validateIDIndicator,
   validateExpiresLine,
@@ -220,6 +221,27 @@ describe('Document has some links like a reference appears but does not occur in
     await expect(validateLinksInText(doc, { mode: MODES.NORMAL })).resolves.toContainError('REFERENCE_MISSING_IN_REFERENCE_SECTION', ValidationWarning)
     await expect(validateLinksInText(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('REFERENCE_MISSING_IN_REFERENCE_SECTION', ValidationWarning)
     await expect(validateLinksInText(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('REFERENCE_MISSING_IN_REFERENCE_SECTION', ValidationWarning)
+  })
+})
+
+describe('The copyright line is not present.', () => {
+  test('copyright line is not present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.copyrightSection6_b_i = false
+
+    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+  })
+  test('copyright line is present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.copyrightSection6_b_i = true
+
+    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 })
 
