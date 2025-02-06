@@ -42,6 +42,7 @@ export const baseTXTDoc = {
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
+      isCopyrightNoticeNumbered: null,
       linesWithSpaces: [],
       hyphenatedLines: [],
       inlineCode: [],
