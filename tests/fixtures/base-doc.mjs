@@ -54,7 +54,7 @@ export const baseTXTDoc = {
     contains: {
       revisedBsdLicense: false,
       codeBlocks: false,
-      copyrightLine: false
+      copyrightSection6_b_i: false
     }
   }
 }
