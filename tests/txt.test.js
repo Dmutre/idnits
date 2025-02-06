@@ -18,7 +18,6 @@ import {
   validateExpiresLine,
   validateCopyrightNoticeSectionIsNumbered,
   validateStatusOfThisMemoSectionIsNumbered,
-  validateCopyrightSection,
   validateCopyrightDate
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
