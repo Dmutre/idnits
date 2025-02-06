@@ -126,7 +126,7 @@ if (argv.output === 'pretty') {
 
 // Get Year
 const year = argv.year
-if (argv.output === 'pretty') {
+if (argv.output === 'pretty' && year) {
   console.log(chalk.bgWhite.black(' Year ') + ` ${argv.year} `)
 }
 
