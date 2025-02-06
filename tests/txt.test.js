@@ -356,6 +356,28 @@ describe('Document obsoletes or updates any pre-5378 document, and doesn\'t cont
   })
 })
 
+describe('Any prior version of the document might be pre-5378 and the document doesn`t contain the pre-5378 material of TLP4 6.c.iii', () => {
+  test('Document contain pre-5378 material ', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.pre5378Material = true
+
+    await expect(validateDocumentTrust6cIii(doc, { mode: MODES.NORMAL })).resolves.toContainError('PRE_5378_MATERIAL_EXISTS', ValidationWarning)
+    await expect(validateDocumentTrust6cIii(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('PRE_5378_MATERIAL_EXISTS', ValidationWarning)
+    await expect(validateDocumentTrust6cIii(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('PRE_5378_MATERIAL_EXISTS', ValidationWarning)
+  })
+
+  test('Document doesn`t contain the pre-5378 material', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.pre5378Material = false
+
+    await expect(validateDocumentTrust6cIii(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateDocumentTrust6cIii(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateDocumentTrust6cIii(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
 describe('validateCodeComments', () => {
   test('should return no warnings for documents without comments outside code blocks', async () => {
     const doc = {
