@@ -12,11 +12,13 @@ import {
   validatePKorBM,
   validateAbstractSectionIsNumbered,
   validateLinksInText,
+  validateCopyrightSection,
   validatePages,
   validateIDIndicator,
   validateExpiresLine,
   validateCopyrightNoticeSectionIsNumbered,
-  validateStatusOfThisMemoSectionIsNumbered
+  validateStatusOfThisMemoSectionIsNumbered,
+  validateCopyrightDate
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -221,6 +223,27 @@ describe('Document has some links like a reference appears but does not occur in
   })
 })
 
+describe('The copyright line is not present.', () => {
+  test('copyright line is not present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.copyrightSection6_b_i = false
+
+    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+  })
+  test('copyright line is present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.copyrightSection6_b_i = true
+
+    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
 describe('The Copyright Notice section should not be numbered.', () => {
   test('Copyright Notice section numbered', async () => {
     const doc = cloneDeep(baseTXTDoc)
@@ -239,6 +262,65 @@ describe('The Copyright Notice section should not be numbered.', () => {
     await expect(validateCopyrightNoticeSectionIsNumbered(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
     await expect(validateCopyrightNoticeSectionIsNumbered(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
     await expect(validateCopyrightNoticeSectionIsNumbered(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
+describe('The copyright line is not present.', () => {
+  test('copyright line is not present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.copyrightSection6_b_i = false
+
+    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
+  })
+  test('copyright line is present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.copyrightSection6_b_i = true
+
+    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
+describe('The copyright date is not valid.', () => {
+  test('copyright text date valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.copyrightDates = [2025]
+
+    await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+  test('copyright console date valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.data.extractedElements.copyrightDates = [2025]
+
+    await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL, year: 2025 })).resolves.toHaveLength(0)
+    await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST, year: 2025 })).resolves.toHaveLength(0)
+    await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION, year: 2025 })).resolves.toHaveLength(0)
+  })
+  test('copyright text date not valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.copyrightDates = [2023]
+
+    await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+    await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+    await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+  })
+  test('copyright console date not valid', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.copyrightDates = [2034]
+
+    await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+    await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+    await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
   })
 })
 
@@ -310,7 +392,7 @@ describe('validateCodeBlockLicenses', () => {
       data: {
         contains: {
           codeBlocks: false,
-          revisedBsdLicense: false
+          revisedBsdLicense6_i: false
         }
       }
     }
@@ -325,7 +407,7 @@ describe('validateCodeBlockLicenses', () => {
       data: {
         contains: {
           codeBlocks: true,
-          revisedBsdLicense: true
+          revisedBsdLicense6_i: true
         }
       }
     }
@@ -340,7 +422,7 @@ describe('validateCodeBlockLicenses', () => {
       data: {
         contains: {
           codeBlocks: true,
-          revisedBsdLicense: false
+          revisedBsdLicense6_i: false
         }
       }
     }
@@ -363,7 +445,7 @@ describe('validateCodeBlockLicenses', () => {
       data: {
         contains: {
           codeBlocks: true,
-          revisedBsdLicense: false
+          revisedBsdLicense6_i: false
         }
       }
     }
@@ -373,7 +455,7 @@ describe('validateCodeBlockLicenses', () => {
     expect(result).toHaveLength(0)
   })
 
-  test('should handle missing "revisedBsdLicense" gracefully', async () => {
+  test('should handle missing "revisedBsdLicense6_i" gracefully', async () => {
     const doc = {
       data: {
         contains: {

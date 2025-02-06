@@ -23,6 +23,7 @@ export const baseTXTDoc = {
     title: null,
     slug: null,
     extractedElements: {
+      copyrightDates: [],
       isPKorBM: null,
       fqdnDomains: [],
       ipv4: [],
@@ -54,6 +55,9 @@ export const baseTXTDoc = {
       rfc8174: false
     },
     contains: {
+      revisedBsdLicense6_i: false,
+      codeBlocks: false,
+      copyrightSection6_b_i: false,
       idIndication: false
     }
   }
