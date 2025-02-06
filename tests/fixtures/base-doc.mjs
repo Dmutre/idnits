@@ -58,7 +58,7 @@ export const baseTXTDoc = {
       idIndication: false,
       revisedBsdLicense: false,
       codeBlocks: false,
-      copyrightLine: false
+      copyrightSection6_b_i: false
     }
   }
 }

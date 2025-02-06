@@ -248,7 +248,7 @@ describe('The copyright line is not present.', () => {
   test('copyright line is not present', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
-    doc.data.contains.copyrightLine = false
+    doc.data.contains.copyrightSection6_b_i = false
 
     await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
     await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LINE_MISSING', ValidationError)
@@ -257,7 +257,7 @@ describe('The copyright line is not present.', () => {
   test('copyright line is present', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
-    doc.data.contains.copyrightLine = true
+    doc.data.contains.copyrightSection6_b_i = true
 
     await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
     await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
