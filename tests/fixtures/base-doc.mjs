@@ -23,6 +23,7 @@ export const baseTXTDoc = {
     title: null,
     slug: null,
     extractedElements: {
+      copyrightDates: [],
       isPKorBM: null,
       fqdnDomains: [],
       ipv4: [],
@@ -43,6 +44,7 @@ export const baseTXTDoc = {
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
       isCopyrightNoticeNumbered: null,
+      isStatusOfThisMemoNumbered: null,
       linesWithSpaces: [],
       hyphenatedLines: [],
       inlineCode: [],
