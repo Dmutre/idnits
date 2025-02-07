@@ -18,7 +18,8 @@ import {
   validateExpiresLine,
   validateCopyrightNoticeSectionIsNumbered,
   validateStatusOfThisMemoSectionIsNumbered,
-  validateCopyrightDate
+  validateCopyrightDate,
+  validateAcceptableParagraphNotingThatDraft
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -321,6 +322,28 @@ describe('The copyright date is not valid.', () => {
     await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
     await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
     await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+  })
+})
+
+describe('The Document have acceptable paragraph noting that IDs are working documents.', () => {
+  test('Document have acceptable paragraph', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.acceptableParagraphNotingThatDraft = true
+
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+
+  test('Document don`t acceptable paragraph', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.acceptableParagraphNotingThatDraft = false
+
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.NORMAL })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
   })
 })
 
