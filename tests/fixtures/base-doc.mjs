@@ -55,6 +55,7 @@ export const baseTXTDoc = {
       rfc8174: false
     },
     contains: {
+      draftParagraphOutSixMonthValidity: false,
       acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
       codeBlocks: false,
