@@ -20,8 +20,7 @@ import {
   validateStatusOfThisMemoSectionIsNumbered,
   validateCopyrightDate,
   validateCopyrightLicense,
-  validateDocumentObsoletesOrUpdatesDates,
-  validateDocumentTrust6cIii
+  validateDocumentObsoletesOrUpdatesDates
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
