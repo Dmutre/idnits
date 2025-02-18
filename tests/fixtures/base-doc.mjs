@@ -40,6 +40,8 @@ export const baseTXTDoc = {
       bracketedRfcReferences: []
     },
     possibleIssues: {
+      copyrightLines: [],
+      copyrightLicenses: [],
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
