@@ -240,6 +240,7 @@ describe('The copyright line is not present.', () => {
     const doc = cloneDeep(baseTXTDoc)
 
     doc.data.contains.copyrightSection6_b_i = true
+    doc.data.possibleIssues.copyrightLines = []
 
     await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
     await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
@@ -333,6 +334,7 @@ describe('The copyright license validation.', () => {
     const doc = cloneDeep(baseTXTDoc)
 
     doc.data.possibleIssues.copyrightLicenses = []
+    doc.data.contains.copyrightLine = false
 
     await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
     await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
@@ -362,6 +364,7 @@ describe('The copyright line present more one instance.', () => {
   test('copyright line only one in text', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
+    doc.data.contains.copyrightSection6_b_i = true
     doc.data.possibleIssues.copyrightLines = ['Copyright']
 
     await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
