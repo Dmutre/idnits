@@ -332,6 +332,7 @@ describe('The copyright license validation.', () => {
     const doc = cloneDeep(baseTXTDoc)
 
     doc.data.possibleIssues.copyrightLicenses = []
+    doc.data.contains.copyrightLine = false
 
     await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
     await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
