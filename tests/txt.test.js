@@ -394,8 +394,8 @@ describe('The Document have an acceptable paragraph pointing to the list of curr
   })
 })
 
-describe('The Document have an acceptable paragraph pointing to the list of current ids.', () => {
-  test('Document have acceptable paragraph pointing to the list of current ids', async () => {
+describe('The Document have an acceptable paragraph pointing to the list of current id.', () => {
+  test('Document have acceptable paragraph pointing to the list of current id', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
     doc.data.possibleIssues.paragraphPointingToTheListOfCurrentId = ['The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.']
@@ -405,7 +405,7 @@ describe('The Document have an acceptable paragraph pointing to the list of curr
     await expect(validateMultipleAcceptableParagraphPointingListId(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 
-  test('Document don`t acceptable paragraph pointing to the list of current ids', async () => {
+  test('Document don`t acceptable paragraph pointing to the list of current id', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
     doc.data.possibleIssues.paragraphPointingToTheListOfCurrentId = ['The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.', 'The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.']
