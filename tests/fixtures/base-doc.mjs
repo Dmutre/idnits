@@ -59,6 +59,7 @@ export const baseTXTDoc = {
     },
     contains: {
       draftParagraphOutSixMonthValidity: false,
+      pagesFound: 0,
       submissionCompliance: false,
       acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
