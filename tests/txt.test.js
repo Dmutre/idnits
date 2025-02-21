@@ -334,7 +334,7 @@ describe('Validate pages are not separated by formfeeds.', () => {
   test('pages are not separated by formfeeds.', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
-    doc.data.contains.formfeedCount = 3
+    doc.data.contains.pagesFound = 3
     doc.data.pageCount = 6
 
     await expect(validateSeparatedFormfeeds(doc, { mode: MODES.NORMAL })).resolves.toContainError('PAGES_NOT_SEPARATED_BY_FORMFEEDS', ValidationWarning)
@@ -344,7 +344,7 @@ describe('Validate pages are not separated by formfeeds.', () => {
   test('pages are contain separated by formfeeds.', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
-    doc.data.contains.formfeedCount = 2
+    doc.data.contains.pagesFound = 4
     doc.data.pageCount = 4
 
     await expect(validateSeparatedFormfeeds(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)

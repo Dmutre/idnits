@@ -57,7 +57,7 @@ export const baseTXTDoc = {
       rfc8174: false
     },
     contains: {
-      formfeedCount: 0,
+      pagesFound: 0,
       submissionCompliance: false,
       acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
