@@ -40,7 +40,6 @@ export const baseTXTDoc = {
       bracketedRfcReferences: []
     },
     possibleIssues: {
-      isTableOfContentsExists: null,
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
@@ -49,8 +48,7 @@ export const baseTXTDoc = {
       linesWithSpaces: [],
       hyphenatedLines: [],
       inlineCode: [],
-      misspeled2119Keywords: [],
-      submissionCompliancePage: null
+      misspeled2119Keywords: []
     },
     references: {
       rfc2119: false,
@@ -58,8 +56,6 @@ export const baseTXTDoc = {
     },
     contains: {
       formfeedCount: 0,
-      submissionCompliance: false,
-      acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
       codeBlocks: false,
       copyrightSection6_b_i: false,
