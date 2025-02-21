@@ -41,6 +41,7 @@ export const baseTXTDoc = {
     },
     possibleIssues: {
       paragraphPointingToTheListOfCurrentId: [],
+      isTableOfContentsExists: null,
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
@@ -57,6 +58,7 @@ export const baseTXTDoc = {
     },
     contains: {
       draftParagraphOutSixMonthValidity: false,
+      submissionCompliance: false,
       acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
       codeBlocks: false,
