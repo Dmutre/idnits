@@ -19,6 +19,7 @@ import {
   validateCopyrightNoticeSectionIsNumbered,
   validateStatusOfThisMemoSectionIsNumbered,
   validateCopyrightDate,
+  validateSubmissionComplianceLine,
   validateDocumentName,
   validateTableOfContentsAndDocumentPages,
   validateAcceptableParagraphNotingThatDraft
@@ -324,6 +325,27 @@ describe('The copyright date is not valid.', () => {
     await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
     await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
     await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
+  })
+})
+
+describe('The submission compliance line validate.', () => {
+  test('submission compliance line missing', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.submissionCompliance = false
+
+    await expect(validateSubmissionComplianceLine(doc, { mode: MODES.NORMAL })).resolves.toContainError('SUBMISSION_COMPLIANCE_LINE_MISSING', ValidationError)
+    await expect(validateSubmissionComplianceLine(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('SUBMISSION_COMPLIANCE_LINE_MISSING', ValidationError)
+    await expect(validateSubmissionComplianceLine(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('SUBMISSION_COMPLIANCE_LINE_MISSING', ValidationError)
+  })
+  test('submission compliance line present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.submissionCompliance = true
+
+    await expect(validateSubmissionComplianceLine(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateSubmissionComplianceLine(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateSubmissionComplianceLine(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 })
 
