@@ -40,6 +40,7 @@ export const baseTXTDoc = {
       bracketedRfcReferences: []
     },
     possibleIssues: {
+      isTableOfContentsExists: null,
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
@@ -56,6 +57,7 @@ export const baseTXTDoc = {
     },
     contains: {
       submissionCompliance: false,
+      acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
       codeBlocks: false,
       copyrightSection6_b_i: false,
