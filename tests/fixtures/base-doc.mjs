@@ -49,7 +49,8 @@ export const baseTXTDoc = {
       linesWithSpaces: [],
       hyphenatedLines: [],
       inlineCode: [],
-      misspeled2119Keywords: []
+      misspeled2119Keywords: [],
+      submissionCompliancePage: null
     },
     references: {
       rfc2119: false,
