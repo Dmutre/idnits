@@ -20,7 +20,10 @@ import {
   validateStatusOfThisMemoSectionIsNumbered,
   validateCopyrightDate,
   validateSubmissionComplianceLine,
-  validateSubmissionComplianceLinePage
+  validateSubmissionComplianceLinePage,
+  validateDocumentName,
+  validateTableOfContentsAndDocumentPages,
+  validateAcceptableParagraphNotingThatDraft
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -375,6 +378,81 @@ describe('The submission compliance page validate.', () => {
     await expect(validateSubmissionComplianceLinePage(doc, { mode: MODES.NORMAL })).resolves.toContainError('SUBMISSION_COMPLIANCE_LINE_NOT_ON_THE_FIRST_PAGE', ValidationError)
     await expect(validateSubmissionComplianceLinePage(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('SUBMISSION_COMPLIANCE_LINE_NOT_ON_THE_FIRST_PAGE', ValidationError)
     await expect(validateSubmissionComplianceLinePage(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('SUBMISSION_COMPLIANCE_LINE_NOT_ON_THE_FIRST_PAGE', ValidationError)
+  })
+})
+
+describe('Validate document name on first page.', () => {
+  test('Document name doesn`t on first page', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.slug = null
+
+    await expect(validateDocumentName(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_NAME_MISSING', ValidationError)
+    await expect(validateDocumentName(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_NAME_MISSING', ValidationError)
+    await expect(validateDocumentName(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('DOCUMENT_NAME_MISSING', ValidationError)
+  })
+  test('Document name is present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.slug = 'draft-'
+
+    await expect(validateDocumentName(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateDocumentName(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateDocumentName(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+})
+
+describe('The document has more than 15 pages and not Table of Contents.', () => {
+  test('Table of Contents exists and pages less 15', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.isTableOfContentsExists = true
+    doc.data.pageCount = 14
+
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+  test('Table of Contents missing and pages less 15', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.data.possibleIssues.isTableOfContentsExists = false
+    doc.data.pageCount = 14
+
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationError)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationError)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationWarning)
+  })
+  test('Table of Contents missing and pages more 15', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.isTableOfContentsExists = false
+    doc.data.pageCount = 17
+
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationError)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationError)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationWarning)
+  })
+})
+
+describe('The Document have acceptable paragraph noting that IDs are working documents.', () => {
+  test('Document have acceptable paragraph', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.acceptableParagraphNotingThatDraft = true
+
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+
+  test('Document don`t acceptable paragraph', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.contains.acceptableParagraphNotingThatDraft = false
+
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.NORMAL })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
+    await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
   })
 })
 
