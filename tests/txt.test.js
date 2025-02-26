@@ -20,7 +20,7 @@ import {
   validateStatusOfThisMemoSectionIsNumbered,
   validateCopyrightDate,
   validateCopyrightLicense,
-  validateDocumentObsoletesOrUpdatesDates
+  validatePre5378Documents
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -395,92 +395,33 @@ describe('The copyright license present more one instance.', () => {
 })
 
 describe('Document obsoletes or updates any pre-5378 document, and doesn\'t contain the pre-5378 material of TLP4 6.c.iii', () => {
-  test('updates and obsoletes have old dates', async () => {
+  test('updates and obsoletes have invalid rfc', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
-    doc.data.header.date = { day: 7, month: 'March', year: 2023 }
-    doc.data.extractedElements.updatesRfc = ['12236', '13237']
-    doc.data.extractedElements.obsoletesRfc = ['3456', '2345']
+    doc.data.extractedElements.updatesRfc = ['12236', '2133']
+    doc.data.extractedElements.obsoletesRfc = ['12344', '2345']
     doc.data.contains.licencse6_b_iii = false
 
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.NORMAL })).resolves.toContainError('OBSOLETED_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('OBSOLETED_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('OBSOLETED_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL })).resolves.toContainError('OBSOLETED_RFC_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('OBSOLETED_RFC_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('OBSOLETED_RFC_NOT_VALID', ValidationWarning)
 
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.NORMAL })).resolves.toContainError('UPDATES_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('UPDATES_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('UPDATES_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL })).resolves.toContainError('UPDATES_RFC_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('UPDATES_RFC_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('UPDATES_RFC_NOT_VALID', ValidationWarning)
   })
-  test('updates and obsoletes didn`t have old dates', async () => {
+  test('updates and obsoletes valid and contains the license declaration', async () => {
     const doc = cloneDeep(baseTXTDoc)
 
-    doc.data.header.date = { day: 7, month: 'March', year: 2023 }
-
-    doc.data.extractedElements.updatesRfc = ['6789']
-    doc.data.extractedElements.obsoletesRfc = ['5678']
+    doc.data.extractedElements.updatesRfc = ['12236', '13237']
+    doc.data.extractedElements.obsoletesRfc = ['123412', '6453']
     doc.data.contains.licencse6_b_iii = true
 
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
-
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
-  })
-
-  test('updates and obsoletes have old dates but lacks license declaration', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.header.date = { day: 7, month: 'March', year: 2023 }
-    doc.data.extractedElements.updatesRfc = ['12236', '13237']
-    doc.data.extractedElements.obsoletesRfc = ['3456', '2345']
-    doc.data.contains.licencse6_b_iii = false
-
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.NORMAL }))
-      .resolves.toContainError('OBSOLETED_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.FORGIVE_CHECKLIST }))
-      .resolves.toContainError('OBSOLETED_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.SUBMISSION }))
-      .resolves.toContainError('OBSOLETED_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.NORMAL }))
-      .resolves.toContainError('UPDATES_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.FORGIVE_CHECKLIST }))
-      .resolves.toContainError('UPDATES_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.SUBMISSION }))
-      .resolves.toContainError('UPDATES_RFC_PUB_DATE_NOT_VALID', ValidationWarning)
-  })
-
-  test('updates and obsoletes have old dates and contains the license declaration', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.header.date = { day: 7, month: 'March', year: 2023 }
-    doc.data.extractedElements.updatesRfc = ['12236', '13237']
-    doc.data.extractedElements.obsoletesRfc = ['3456', '2345']
-    doc.data.contains.licencse6_b_iii = true
-
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.NORMAL }))
+    await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL }))
       .resolves.toHaveLength(0)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.FORGIVE_CHECKLIST }))
+    await expect(validatePre5378Documents(doc, { mode: MODES.FORGIVE_CHECKLIST }))
       .resolves.toHaveLength(0)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.SUBMISSION }))
-      .resolves.toHaveLength(0)
-  })
-
-  test('updates and obsoletes did not have old dates', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.header.date = { day: 7, month: 'March', year: 2023 }
-    doc.data.extractedElements.updatesRfc = ['6789']
-    doc.data.extractedElements.obsoletesRfc = ['5678']
-    doc.data.contains.licencse6_b_iii = false
-
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.NORMAL }))
-      .resolves.toHaveLength(0)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.FORGIVE_CHECKLIST }))
-      .resolves.toHaveLength(0)
-    await expect(validateDocumentObsoletesOrUpdatesDates(doc, { mode: MODES.SUBMISSION }))
+    await expect(validatePre5378Documents(doc, { mode: MODES.SUBMISSION }))
       .resolves.toHaveLength(0)
   })
 })
