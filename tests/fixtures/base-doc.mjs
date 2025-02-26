@@ -42,6 +42,8 @@ export const baseTXTDoc = {
     possibleIssues: {
       copyrightLines: [],
       copyrightLicenses: [],
+      paragraphPointingToTheListOfCurrentId: [],
+      isTableOfContentsExists: null,
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
       isAbstractNumbered: null,
@@ -50,13 +52,18 @@ export const baseTXTDoc = {
       linesWithSpaces: [],
       hyphenatedLines: [],
       inlineCode: [],
-      misspeled2119Keywords: []
+      misspeled2119Keywords: [],
+      submissionCompliancePage: null
     },
     references: {
       rfc2119: false,
       rfc8174: false
     },
     contains: {
+      draftParagraphOutSixMonthValidity: false,
+      pagesFound: 0,
+      submissionCompliance: false,
+      acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
       codeBlocks: false,
       idIndication: false,
