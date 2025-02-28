@@ -40,6 +40,8 @@ export const baseTXTDoc = {
       bracketedRfcReferences: []
     },
     possibleIssues: {
+      copyrightLines: [],
+      copyrightLicenses: [],
       paragraphPointingToTheListOfCurrentId: [],
       isTableOfContentsExists: null,
       updatesRfcWithLetter: [],
@@ -65,8 +67,10 @@ export const baseTXTDoc = {
       acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
       codeBlocks: false,
+      idIndication: false,
+      licencse6_b_iii: false,
       copyrightSection6_b_i: false,
-      idIndication: false
+      copyrightLicenseValid: false
     }
   }
 }
