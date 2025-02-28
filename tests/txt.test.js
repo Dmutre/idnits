@@ -27,7 +27,8 @@ import {
   validateSubmissionComplianceLine,
   validateSubmissionComplianceLinePage,
   validateDocumentName,
-  validateTableOfContentsAndDocumentPages
+  validateTableOfContentsAndDocumentPages,
+  validateFormFeedOnSeparateLine
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -480,6 +481,28 @@ describe('The Document have acceptable paragraph noting that IDs are working doc
     await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.NORMAL })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
     await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
     await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
+  })
+})
+
+describe('FORMFEED and [Page occur on a line, possibly separated by spaces (indicates NROFF post-processing wasn`t successful).', () => {
+  test('Document don`t have formfeed and page occur on a line', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.pageLineWithFormFeed = []
+
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+
+  test('Document have formfeed and page occur on a line', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.pageLineWithFormFeed = [{ page: 1, line: 2 }]
+
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_DIDN`T_SUCCESSFULLY_PASS_NROFF_POST_PROCESSING', ValidationComment)
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_DIDN`T_SUCCESSFULLY_PASS_NROFF_POST_PROCESSING', ValidationComment)
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('DOCUMENT_DIDN`T_SUCCESSFULLY_PASS_NROFF_POST_PROCESSING', ValidationComment)
   })
 })
 
