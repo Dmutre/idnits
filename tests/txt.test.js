@@ -357,7 +357,7 @@ describe('Document obsoletes or updates any pre-5378 document, and doesn\'t cont
     const doc = cloneDeep(baseTXTDoc)
 
     doc.data.extractedElements.updatesRfc = ['12236', '13237']
-    doc.data.extractedElements.obsoletesRfc = ['123412', '6453']
+    doc.data.extractedElements.obsoletesRfc = ['9412', '6453']
     doc.data.contains.licencse6_b_iii = true
 
     await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL }))
