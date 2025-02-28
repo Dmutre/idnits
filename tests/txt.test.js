@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { MODES } from '../lib/config/modes.mjs'
 import { toContainError, ValidationError, ValidationWarning } from '../lib/helpers/error.mjs'
-import { validateLineLength, validateCodeComments, validateCodeBlockLicenses, validateLineExtraSpacing, validateUpdatesAndObsoletesLines } from '../lib/modules/txt.mjs'
+import { validateLineLength, validateCodeComments, validateCodeBlockLicenses, validateLineExtraSpacing, validateUpdatesAndObsoletesLines, validatePre5378Documents } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
 
@@ -228,5 +228,37 @@ describe('validateCodeBlockLicenses', () => {
         }
       )
     ])
+  })
+})
+
+describe('Document obsoletes or updates any pre-5378 document, and doesn\'t contain the pre-5378 material of TLP4 6.c.iii', () => {
+  test('updates and obsoletes have invalid rfc', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.updatesRfc = ['12236', '2133']
+    doc.data.extractedElements.obsoletesRfc = ['12344', '2345']
+    doc.data.contains.licencse6_b_iii = false
+
+    await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL })).resolves.toContainError('OBSOLETED_RFC_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('OBSOLETED_RFC_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('OBSOLETED_RFC_NOT_VALID', ValidationWarning)
+
+    await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL })).resolves.toContainError('UPDATES_RFC_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('UPDATES_RFC_NOT_VALID', ValidationWarning)
+    await expect(validatePre5378Documents(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('UPDATES_RFC_NOT_VALID', ValidationWarning)
+  })
+  test('updates and obsoletes valid and contains the license declaration', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.extractedElements.updatesRfc = ['12236', '13237']
+    doc.data.extractedElements.obsoletesRfc = ['9412', '6453']
+    doc.data.contains.licencse6_b_iii = true
+
+    await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL }))
+      .resolves.toHaveLength(0)
+    await expect(validatePre5378Documents(doc, { mode: MODES.FORGIVE_CHECKLIST }))
+      .resolves.toHaveLength(0)
+    await expect(validatePre5378Documents(doc, { mode: MODES.SUBMISSION }))
+      .resolves.toHaveLength(0)
   })
 })
