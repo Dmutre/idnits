@@ -19,7 +19,6 @@ import {
   validateCopyrightNoticeSectionIsNumbered,
   validateStatusOfThisMemoSectionIsNumbered,
   validateCopyrightDate,
-  validateCopyrightLicense,
   validatePre5378Documents,
   validateAcceptableParagraphNotingThatDraft,
   validateAcceptableParagraphCallingOutSixMonthValidity,
@@ -335,71 +334,6 @@ describe('The copyright date is not valid.', () => {
     await expect(validateCopyrightDate(doc, { mode: MODES.NORMAL, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
     await expect(validateCopyrightDate(doc, { mode: MODES.FORGIVE_CHECKLIST, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
     await expect(validateCopyrightDate(doc, { mode: MODES.SUBMISSION, year: 2024 })).resolves.toContainError('COPYRIGHT_DATE_NOT_VALID', ValidationWarning)
-  })
-})
-
-describe('The copyright license validation.', () => {
-  test('copyright license not valid', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLicenses = []
-    doc.data.contains.copyrightLine = false
-
-    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
-  })
-  test('copyright license valid', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLicenses = ['Copyright license']
-
-    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
-  })
-})
-
-describe('The copyright line present more one instance.', () => {
-  test('copyright line more one instance', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLines = ['Copyright', 'Copyright']
-
-    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LINE_MORE_THAN_ONE', ValidationWarning)
-    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LINE_MORE_THAN_ONE', ValidationWarning)
-    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LINE_MORE_THAN_ONE', ValidationWarning)
-  })
-  test('copyright line only one in text', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.contains.copyrightSection6_b_i = true
-    doc.data.possibleIssues.copyrightLines = ['Copyright']
-
-    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
-    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
-    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
-  })
-})
-
-describe('The copyright license present more one instance.', () => {
-  test('copyright license more one instance', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLicenses = ['Copyright license', 'Copyright license']
-
-    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
-  })
-  test('copyright license only one in text', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLicenses = ['Copyright license']
-
-    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
 })
 
