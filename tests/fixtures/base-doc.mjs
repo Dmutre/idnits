@@ -54,7 +54,8 @@ export const baseTXTDoc = {
       hyphenatedLines: [],
       inlineCode: [],
       misspeled2119Keywords: [],
-      submissionCompliancePage: null
+      submissionCompliancePage: null,
+      pageLineWithFormFeed: []
     },
     references: {
       rfc2119: false,

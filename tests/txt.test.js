@@ -19,7 +19,6 @@ import {
   validateCopyrightNoticeSectionIsNumbered,
   validateStatusOfThisMemoSectionIsNumbered,
   validateCopyrightDate,
-  validateCopyrightLicense,
   validatePre5378Documents,
   validateAcceptableParagraphNotingThatDraft,
   validateAcceptableParagraphCallingOutSixMonthValidity,
@@ -30,7 +29,8 @@ import {
   validateSubmissionComplianceLinePage,
   validateDocumentName,
   validateTableOfContentsAndDocumentPages,
-  validateTitleUnexpectedIndentation
+  validateTitleUnexpectedIndentation,
+  validateFormFeedOnSeparateLine
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -339,71 +339,6 @@ describe('The copyright date is not valid.', () => {
   })
 })
 
-describe('The copyright license validation.', () => {
-  test('copyright license not valid', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLicenses = []
-    doc.data.contains.copyrightLine = false
-
-    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LICENSE_NOT_VALID', ValidationError)
-  })
-  test('copyright license valid', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLicenses = ['Copyright license']
-
-    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
-  })
-})
-
-describe('The copyright line present more one instance.', () => {
-  test('copyright line more one instance', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLines = ['Copyright', 'Copyright']
-
-    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LINE_MORE_THAN_ONE', ValidationWarning)
-    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LINE_MORE_THAN_ONE', ValidationWarning)
-    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LINE_MORE_THAN_ONE', ValidationWarning)
-  })
-  test('copyright line only one in text', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.contains.copyrightSection6_b_i = true
-    doc.data.possibleIssues.copyrightLines = ['Copyright']
-
-    await expect(validateCopyrightSection(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
-    await expect(validateCopyrightSection(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
-    await expect(validateCopyrightSection(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
-  })
-})
-
-describe('The copyright license present more one instance.', () => {
-  test('copyright license more one instance', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLicenses = ['Copyright license', 'Copyright license']
-
-    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('COPYRIGHT_LICENSES_MORE_THAN_ONE', ValidationWarning)
-  })
-  test('copyright license only one in text', async () => {
-    const doc = cloneDeep(baseTXTDoc)
-
-    doc.data.possibleIssues.copyrightLicenses = ['Copyright license']
-
-    await expect(validateCopyrightLicense(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
-    await expect(validateCopyrightLicense(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
-  })
-})
-
 describe('Document obsoletes or updates any pre-5378 document, and doesn\'t contain the pre-5378 material of TLP4 6.c.iii', () => {
   test('updates and obsoletes have invalid rfc', async () => {
     const doc = cloneDeep(baseTXTDoc)
@@ -424,7 +359,7 @@ describe('Document obsoletes or updates any pre-5378 document, and doesn\'t cont
     const doc = cloneDeep(baseTXTDoc)
 
     doc.data.extractedElements.updatesRfc = ['12236', '13237']
-    doc.data.extractedElements.obsoletesRfc = ['123412', '6453']
+    doc.data.extractedElements.obsoletesRfc = ['9412', '6453']
     doc.data.contains.licencse6_b_iii = true
 
     await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL }))
@@ -583,6 +518,28 @@ describe('The Document have acceptable paragraph noting that IDs are working doc
     await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.NORMAL })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
     await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
     await expect(validateAcceptableParagraphNotingThatDraft(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('ACCEPTABLE_PARAGRAPH_NOTING_THAT_DRAFT_MISSING', ValidationError)
+  })
+})
+
+describe('FORMFEED and [Page occur on a line, possibly separated by spaces (indicates NROFF post-processing wasn`t successful).', () => {
+  test('Document don`t have formfeed and page occur on a line', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.pageLineWithFormFeed = []
+
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
+  })
+
+  test('Document have formfeed and page occur on a line', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+
+    doc.data.possibleIssues.pageLineWithFormFeed = [{ page: 1, line: 2 }]
+
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_DIDN`T_SUCCESSFULLY_PASS_NROFF_POST_PROCESSING', ValidationComment)
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_DIDN`T_SUCCESSFULLY_PASS_NROFF_POST_PROCESSING', ValidationComment)
+    await expect(validateFormFeedOnSeparateLine(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('DOCUMENT_DIDN`T_SUCCESSFULLY_PASS_NROFF_POST_PROCESSING', ValidationComment)
   })
 })
 
