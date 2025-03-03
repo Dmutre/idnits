@@ -2,6 +2,7 @@ export const baseTXTDoc = {
   type: 'txt',
   filename: '',
   body: '',
+  slug: '',
   data: {
     pageCount: 1,
     header: {
@@ -37,7 +38,8 @@ export const baseTXTDoc = {
       nonReferenceSectionDraftReferences: [],
       referenceSectionDraftReferences: [],
       bracketedRfcNonReferences: [],
-      bracketedRfcReferences: []
+      bracketedRfcReferences: [],
+      licence6_b_ii: []
     },
     possibleIssues: {
       unexpectedIndentation: [],
