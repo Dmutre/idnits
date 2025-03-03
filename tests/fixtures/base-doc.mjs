@@ -40,6 +40,7 @@ export const baseTXTDoc = {
       bracketedRfcReferences: []
     },
     possibleIssues: {
+      unexpectedIndentation: [],
       copyrightLines: [],
       copyrightLicenses: [],
       paragraphPointingToTheListOfCurrentId: [],
