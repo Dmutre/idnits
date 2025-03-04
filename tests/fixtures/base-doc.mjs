@@ -39,7 +39,8 @@ export const baseTXTDoc = {
       referenceSectionDraftReferences: [],
       bracketedRfcNonReferences: [],
       bracketedRfcReferences: [],
-      licence6_b_ii: []
+      licence6_b_ii: [],
+      licence6_b_i: []
     },
     possibleIssues: {
       unexpectedIndentation: [],
@@ -71,7 +72,7 @@ export const baseTXTDoc = {
       revisedBsdLicense6_i: false,
       codeBlocks: false,
       idIndication: false,
-      licencse6_b_iii: false,
+      licencse6_c_iii: false,
       copyrightSection6_b_i: false,
       copyrightLicenseValid: false
     }

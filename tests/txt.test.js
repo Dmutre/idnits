@@ -373,7 +373,7 @@ describe('Document obsoletes or updates any pre-5378 document, and doesn\'t cont
 
     doc.data.extractedElements.updatesRfc = ['12236', '2133']
     doc.data.extractedElements.obsoletesRfc = ['12344', '2345']
-    doc.data.contains.licencse6_b_iii = false
+    doc.data.contains.licencse6_c_iii = false
 
     await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL })).resolves.toContainError('OBSOLETED_RFC_NOT_VALID', ValidationWarning)
     await expect(validatePre5378Documents(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('OBSOLETED_RFC_NOT_VALID', ValidationWarning)
@@ -388,7 +388,7 @@ describe('Document obsoletes or updates any pre-5378 document, and doesn\'t cont
 
     doc.data.extractedElements.updatesRfc = ['12236', '13237']
     doc.data.extractedElements.obsoletesRfc = ['9412', '6453']
-    doc.data.contains.licencse6_b_iii = true
+    doc.data.contains.licencse6_c_iii = true
 
     await expect(validatePre5378Documents(doc, { mode: MODES.NORMAL }))
       .resolves.toHaveLength(0)
@@ -1020,5 +1020,41 @@ describe('validateLicenseDeclarations', () => {
 
     const result = await validateLicenseDeclarations(doc)
     expect(result).toHaveLength(0)
+  })
+
+  test('should return warning where moew than one 6.b.ii license declaration is present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.data.slug = 'other-document'
+    doc.data.contains.licence6_c_i = true
+    doc.data.contains.licence6_c_ii = true
+    doc.data.contains.revisedBsdLicense6_i = true
+    doc.data.extractedElements.licence6_b_ii = ['MIT', 'BSD']
+
+    const result = await validateLicenseDeclarations(doc)
+    expect(result).toContainEqual(new ValidationWarning(
+      'TLP4_LICENSE_NOTICE_REPEATED',
+      'The document has multiple instances of the TLP-4 license notice (6.b.i or 6.b.ii).',
+      {
+        ref: 'https://trustee.ietf.org/license-info'
+      }
+    ))
+  })
+
+  test('should return warning where moew than one 6.b.i license declaration is present', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.data.slug = 'other-document'
+    doc.data.contains.licence6_c_i = true
+    doc.data.contains.licence6_c_ii = true
+    doc.data.contains.revisedBsdLicense6_i = true
+    doc.data.extractedElements.licence6_b_i = ['MIT', 'BSD']
+
+    const result = await validateLicenseDeclarations(doc)
+    expect(result).toContainEqual(new ValidationWarning(
+      'TLP4_LICENSE_NOTICE_REPEATED',
+      'The document has multiple instances of the TLP-4 license notice (6.b.i or 6.b.ii).',
+      {
+        ref: 'https://trustee.ietf.org/license-info'
+      }
+    ))
   })
 })
