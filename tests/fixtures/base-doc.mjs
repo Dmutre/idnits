@@ -43,7 +43,7 @@ export const baseTXTDoc = {
     },
     possibleIssues: {
       unexpectedIndentation: [],
-      copyrightLines: [],
+      copyrightLines6_i: [],
       copyrightLicenses: [],
       paragraphPointingToTheListOfCurrentId: [],
       isTableOfContentsExists: null,
