@@ -31,7 +31,8 @@ import {
   validateTableOfContentsAndDocumentPages,
   validateTitleUnexpectedIndentation,
   validateFormFeedOnSeparateLine,
-  validateLicenseDeclarations
+  validateLicenseDeclarations,
+  validateAnyPriorVersionIsPre5378
 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
@@ -1056,5 +1057,53 @@ describe('validateLicenseDeclarations', () => {
         ref: 'https://trustee.ietf.org/license-info'
       }
     ))
+  })
+})
+
+describe('validateAnyPriorVersionIsPre5378', () => {
+  test('draft with versions before 10 Nov 2008 missing license', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.slug = 'draft-ietf-mmusic-qos-identification'
+    doc.data.contains.licencse6_c_iii = false
+
+    const result = await validateAnyPriorVersionIsPre5378(doc)
+
+    expect(result).toContainEqual(new ValidationWarning(
+      'PRIOR_VERSIONS_PRE_5378',
+      'The document has prior versions that were submitted before 10 Nov 2008.',
+      {
+        ref: 'https://trustee.ietf.org/wp-content/uploads/IETF-TLP-4.pdf'
+      }
+    ))
+  })
+
+  test('draft with versions before 10 Nov 2008 having license', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.slug = 'draft-ietf-idr-rt-derived-community'
+    doc.data.contains.licencse6_c_iii = true
+
+    const result = await validateAnyPriorVersionIsPre5378(doc)
+
+    expect(result).toHaveLength(0)
+  })
+
+  test('draft without versions before 10 Nov 2008', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.slug = 'draft-without-pre5378'
+    doc.data.contains.licencse6_c_iii = false
+
+    const result = await validateAnyPriorVersionIsPre5378(doc)
+
+    expect(result).toHaveLength(0)
+  })
+
+  test('pre5378 draft with licence', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.slug = 'draft-ietf-mmusic-qos-identification'
+    doc.data.contains.licencse6_c_iii = true
+
+    const result = await validateAnyPriorVersionIsPre5378(doc)
+
+    expect(result).toHaveLength(0)
   })
 })
