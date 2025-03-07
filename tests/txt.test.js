@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { MODES } from '../lib/config/modes.mjs'
 import { toContainError, ValidationError, ValidationWarning } from '../lib/helpers/error.mjs'
-import { validateLineLength, validateCodeComments, validateCodeBlockLicenses, validateLineExtraSpacing, validateUpdatesAndObsoletesLines, validatePre5378Documents } from '../lib/modules/txt.mjs'
+import { validateLineLength, validateCodeComments, validateCodeBlockLicenses, validateLineExtraSpacing, validateUpdatesAndObsoletesLines, validatePre5378Documents, validateAnyPriorVersionIsPre5378 } from '../lib/modules/txt.mjs'
 import { baseTXTDoc } from './fixtures/base-doc.mjs'
 import { cloneDeep } from 'lodash-es'
 
@@ -260,5 +260,53 @@ describe('Document obsoletes or updates any pre-5378 document, and doesn\'t cont
       .resolves.toHaveLength(0)
     await expect(validatePre5378Documents(doc, { mode: MODES.SUBMISSION }))
       .resolves.toHaveLength(0)
+  })
+})
+
+describe('validateAnyPriorVersionIsPre5378', () => {
+  test('draft with versions before 10 Nov 2008 missing license', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.slug = 'draft-ietf-mmusic-qos-identification'
+    doc.data.contains.licencse6_c_iii = false
+
+    const result = await validateAnyPriorVersionIsPre5378(doc)
+
+    expect(result).toContainEqual(new ValidationWarning(
+      'PRIOR_VERSIONS_PRE_5378',
+      'The document has prior versions that were submitted before 10 Nov 2008.',
+      {
+        ref: 'https://trustee.ietf.org/wp-content/uploads/IETF-TLP-4.pdf'
+      }
+    ))
+  })
+
+  test('draft with versions before 10 Nov 2008 having license', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.slug = 'draft-ietf-idr-rt-derived-community'
+    doc.data.contains.licencse6_c_iii = true
+
+    const result = await validateAnyPriorVersionIsPre5378(doc)
+
+    expect(result).toHaveLength(0)
+  })
+
+  test('draft without versions before 10 Nov 2008', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.slug = 'draft-without-pre5378'
+    doc.data.contains.licencse6_c_iii = false
+
+    const result = await validateAnyPriorVersionIsPre5378(doc)
+
+    expect(result).toHaveLength(0)
+  })
+
+  test('pre5378 draft with licence', async () => {
+    const doc = cloneDeep(baseTXTDoc)
+    doc.slug = 'draft-ietf-mmusic-qos-identification'
+    doc.data.contains.licencse6_c_iii = true
+
+    const result = await validateAnyPriorVersionIsPre5378(doc)
+
+    expect(result).toHaveLength(0)
   })
 })
