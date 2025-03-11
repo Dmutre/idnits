@@ -15,7 +15,8 @@ import {
   RFC8174BoilerplateTXTBlock,
   metaWithoutObsoleteAndUpdatesTXTBlock,
   metaObsoleteAndUpdatesHasCharactersTXTBlock,
-  ianaConsiderationsTXTBlock
+  ianaConsiderationsTXTBlock,
+  Licence6ciii
 } from './fixtures/txt-blocks/section-blocks.mjs'
 import { parse } from '../lib/parsers/txt.mjs'
 
@@ -1039,5 +1040,34 @@ describe('Parsing obsolete and update metadata with some characters', () => {
     const result = await parse(txt, 'txt')
     expect(result.data.possibleIssues.updatesRfcWithLetter).toHaveLength(0)
     expect(result.data.possibleIssues.obsoletesWithLetter).toHaveLength(0)
+  })
+})
+
+describe('Parsing TLP 6.c.iii licence in text', () => {
+  test('No licence declaration in text', async () => {
+    const txt = `
+    ${metaTXTBlock}
+    ${tableOfContentsTXTBlock}
+    ${abstractWithReferencesTXTBlock}
+    ${introductionTXTBlock}
+    ${securityConsiderationsTXTBlock}
+  `
+
+    const result = await parse(txt, 'txt')
+    expect(result.data.contains.licencse6_b_iii).toBeFalsy()
+  })
+
+  test('6.c.iii licence declaration in text', async () => {
+    const txt = `
+    ${metaTXTBlock}
+    ${tableOfContentsTXTBlock}
+    ${abstractWithReferencesTXTBlock}
+    ${introductionTXTBlock}
+    ${securityConsiderationsTXTBlock}
+    ${Licence6ciii}
+  `
+
+    const result = await parse(txt, 'txt')
+    expect(result.data.contains.licencse6_b_iii).toBeTruthy()
   })
 })

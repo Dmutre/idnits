@@ -218,3 +218,17 @@ export const RFC8174BoilerplateTXTBlock = `
     document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] 
     when, and only when, they appear in all capitals, as shown here.
 `
+
+export const Licence6ciii = `
+   This document may contain material from IETF Documents or IETF
+   Contributions published or made publicly available before November
+   10, 2008.  The person(s) controlling the copyright in some of this
+   material may not have granted the IETF Trust the right to allow
+   modifications of such material outside the IETF Standards Process.
+   Without obtaining an adequate license from the person(s) controlling
+   the copyright in such materials, this document may not be modified
+   outside the IETF Standards Process, and derivative works of it may
+   not be created outside the IETF Standards Process, except to format
+   it for publication as an RFC or to translate it into languages other
+   than English.
+`
