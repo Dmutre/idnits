@@ -2,6 +2,7 @@ export const baseTXTDoc = {
   type: 'txt',
   filename: '',
   body: '',
+  slug: '',
   data: {
     pageCount: 1,
     header: {
@@ -37,9 +38,15 @@ export const baseTXTDoc = {
       nonReferenceSectionDraftReferences: [],
       referenceSectionDraftReferences: [],
       bracketedRfcNonReferences: [],
-      bracketedRfcReferences: []
+      bracketedRfcReferences: [],
+      licence6_b_ii: [],
+      licence6_b_i: []
     },
     possibleIssues: {
+      unexpectedIndentation: [],
+      copyrightLines6_i: [],
+      copyrightLicenses: [],
+      paragraphPointingToTheListOfCurrentId: [],
       isTableOfContentsExists: null,
       updatesRfcWithLetter: [],
       obsoletesWithLetter: [],
@@ -49,18 +56,25 @@ export const baseTXTDoc = {
       linesWithSpaces: [],
       hyphenatedLines: [],
       inlineCode: [],
-      misspeled2119Keywords: []
+      misspeled2119Keywords: [],
+      submissionCompliancePage: null,
+      pageLineWithFormFeed: []
     },
     references: {
       rfc2119: false,
       rfc8174: false
     },
     contains: {
+      draftParagraphOutSixMonthValidity: false,
+      pagesFound: 0,
+      submissionCompliance: false,
       acceptableParagraphNotingThatDraft: false,
       revisedBsdLicense6_i: false,
       codeBlocks: false,
+      idIndication: false,
+      licencse6_c_iii: false,
       copyrightSection6_b_i: false,
-      idIndication: false
+      copyrightLicenseValid: false
     }
   }
 }
