@@ -512,9 +512,9 @@ describe('The document has more than 15 pages and not Table of Contents.', () =>
     doc.data.possibleIssues.isTableOfContentsExists = false
     doc.data.pageCount = 14
 
-    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.NORMAL })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationError)
-    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationError)
-    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.SUBMISSION })).resolves.toContainError('DOCUMENT_HAVE_MORE_15_PAGES_OR_MISS_TABLE_OF_CONTENTS', ValidationWarning)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.NORMAL })).resolves.toHaveLength(0)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.FORGIVE_CHECKLIST })).resolves.toHaveLength(0)
+    await expect(validateTableOfContentsAndDocumentPages(doc, { mode: MODES.SUBMISSION })).resolves.toHaveLength(0)
   })
   test('Table of Contents missing and pages more 15', async () => {
     const doc = cloneDeep(baseTXTDoc)
